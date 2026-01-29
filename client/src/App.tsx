@@ -1,10 +1,13 @@
 import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom'
 import Home from './pages/Home'
 import Dashboard from './pages/admin/Dashboard'
+import { NavbarWatcher } from './components/watcher/NavbarWatcher'
+import { NavbarAdmin } from './components/admin/NavbarAdmin'
 
 const PublicLayout = () => {
   return (
     <div className="min-h-screen bg-white">
+		<NavbarWatcher />
       <Outlet />
     </div>
   )
@@ -12,9 +15,9 @@ const PublicLayout = () => {
 
 const AdminLayout = () => {
   return (
-    <div className="min-h-screen bg-slate-50">
-      <nav className="p-4 bg-slate-900 text-white">NavBar Admin (Temporaire)</nav>
-      <main className="p-4">
+    <div className="min-h-screen bg-slate-100">
+      <NavbarAdmin />
+      <main className="p-4 md:p-8 max-w-7xl mx-auto">
         <Outlet />
       </main>
     </div>
