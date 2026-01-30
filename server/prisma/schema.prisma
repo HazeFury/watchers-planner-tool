@@ -1,0 +1,134 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// =======================
+// 1. LES ACTEURS
+// =======================
+
+// L'administrateur (Accès au Dashboard)
+model Admin {
+  id       Int    @id @default(autoincrement())
+  email    String @unique
+  password String // Haché (bcrypt)
+
+  createdAt DateTime @default(now())
+
+  @@map("admins")
+}
+
+// Le Surveillant (Watcher)
+// Pas de mot de passe. Login via email uniquement.
+model Watcher {
+  id        Int    @id @default(autoincrement())
+  firstName String
+  lastName  String
+  email     String @unique
+  phone     String? // Optionnel, mais pratique pour les admins
+
+  // Relations
+  registrations Registration[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("watchers")
+}
+
+// =======================
+// 2. L'INFRASTRUCTURE
+// =======================
+
+// Les salles (Amphis, Salles de cours...)
+model Room {
+  id   Int    @id @default(autoincrement())
+  name String @unique // Ex: "Amphi 1", "Salle 304"
+
+  // Relations
+  registrations Registration[]
+
+  @@map("rooms")
+}
+
+// =======================
+// 3. L'ÉVÉNEMENT (L'EXAMEN)
+// =======================
+
+model Exam {
+  id          Int      @id @default(autoincrement())
+  title       String?  // Ex: "Maths - S1"
+  
+  // On utilise DateTime pour faciliter les calculs de durée et le tri chrono
+  startTime   DateTime // Contient le jour ET l'heure de début
+  endTime     DateTime // Contient le jour ET l'heure de fin
+
+  cycle       Cycle    // INJ ou PREPA
+  maxWatchers Int      @default(1) // Nombre de places dispos
+
+  // Statut de l'examen (Contrôlé par l'admin)
+  isClosed    Boolean  @default(false) // Si true = Inscriptions closes (Statut FINISHED)
+  isArchived  Boolean  @default(false) // Si true = Caché du dashboard (Statut ARCHIVED)
+
+  // Relations
+  registrations Registration[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("exams")
+}
+
+// =======================
+// 4. LA TABLE DE JOINTURE (Le Cœur)
+// =======================
+// Qui surveille Quoi, Où et Quand (si Tiers-temps)
+
+model Registration {
+  id        Int      @id @default(autoincrement())
+
+  // Liens
+  watcherId Int
+  watcher   Watcher  @relation(fields: [watcherId], references: [id], onDelete: Cascade)
+
+  examId    Int
+  exam      Exam     @relation(fields: [examId], references: [id], onDelete: Cascade)
+
+  roomId    Int?     // Nullable car assigné plus tard par l'admin
+  room      Room?    @relation(fields: [roomId], references: [id])
+
+  // État de l'inscription
+  status    RegStatus @default(REGISTERED)
+
+  // GESTION TIERS-TEMPS / AMÉNAGEMENTS
+  // Si null => on prend les horaires de l'Exam
+  // Si rempli => c'est un horaire spécifique pour CE surveillant
+  specificStart DateTime? 
+  specificEnd   DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Un surveillant ne peut pas s'inscrire 2 fois au même exam
+  @@unique([watcherId, examId])
+  @@map("registrations")
+}
+
+// =======================
+// ENUMS
+// =======================
+
+enum Cycle {
+  ING  // Cycle Ingénieur (J'ai mis ING au lieu de INJ, plus standard, mais tu peux changer)
+  PREPA // Cycle Préparatoire
+}
+
+enum RegStatus {
+  REGISTERED // Inscrit (Par défaut)
+  PRESENT    // A fait le job (Validé pour la paie)
+  ABSENT     // N'est pas venu (Pas bien !)
+}
