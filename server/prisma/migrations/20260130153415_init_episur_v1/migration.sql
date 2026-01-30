@@ -15,16 +15,15 @@ CREATE TABLE "admins" (
 );
 
 -- CreateTable
-CREATE TABLE "watchers" (
+CREATE TABLE "users" (
     "id" SERIAL NOT NULL,
     "firstName" TEXT NOT NULL,
     "lastName" TEXT NOT NULL,
     "email" TEXT NOT NULL,
-    "phone" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "watchers_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "users_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -54,7 +53,7 @@ CREATE TABLE "exams" (
 -- CreateTable
 CREATE TABLE "registrations" (
     "id" SERIAL NOT NULL,
-    "watcherId" INTEGER NOT NULL,
+    "userId" INTEGER NOT NULL,
     "examId" INTEGER NOT NULL,
     "roomId" INTEGER,
     "status" "RegStatus" NOT NULL DEFAULT 'REGISTERED',
@@ -70,16 +69,16 @@ CREATE TABLE "registrations" (
 CREATE UNIQUE INDEX "admins_email_key" ON "admins"("email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "watchers_email_key" ON "watchers"("email");
+CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "rooms_name_key" ON "rooms"("name");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "registrations_watcherId_examId_key" ON "registrations"("watcherId", "examId");
+CREATE UNIQUE INDEX "registrations_userId_examId_key" ON "registrations"("userId", "examId");
 
 -- AddForeignKey
-ALTER TABLE "registrations" ADD CONSTRAINT "registrations_watcherId_fkey" FOREIGN KEY ("watcherId") REFERENCES "watchers"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "registrations" ADD CONSTRAINT "registrations_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "registrations" ADD CONSTRAINT "registrations_examId_fkey" FOREIGN KEY ("examId") REFERENCES "exams"("id") ON DELETE CASCADE ON UPDATE CASCADE;

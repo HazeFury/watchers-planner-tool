@@ -22,14 +22,12 @@ model Admin {
   @@map("admins")
 }
 
-// Le Surveillant (Watcher)
-// Pas de mot de passe. Login via email uniquement.
-model Watcher {
-  id        Int    @id @default(autoincrement())
+// Le Surveillant
+model User {
+  id        Int      @id @default(autoincrement())
   firstName String
   lastName  String
-  email     String @unique
-  phone     String? // Optionnel, mais pratique pour les admins
+  email     String   @unique
 
   // Relations
   registrations Registration[]
@@ -37,7 +35,7 @@ model Watcher {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@map("watchers")
+  @@map("users")
 }
 
 // =======================
@@ -92,8 +90,8 @@ model Registration {
   id        Int      @id @default(autoincrement())
 
   // Liens
-  watcherId Int
-  watcher   Watcher  @relation(fields: [watcherId], references: [id], onDelete: Cascade)
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   examId    Int
   exam      Exam     @relation(fields: [examId], references: [id], onDelete: Cascade)
@@ -114,7 +112,7 @@ model Registration {
   updatedAt DateTime @updatedAt
 
   // Un surveillant ne peut pas s'inscrire 2 fois au même exam
-  @@unique([watcherId, examId])
+  @@unique([userId, examId])
   @@map("registrations")
 }
 
