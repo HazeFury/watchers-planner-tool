@@ -20,4 +20,11 @@ export class AuthController {
 
     return { message: 'Connexion réussie' };
   }
+
+  @Post('logout')
+  logout(@Res({ passthrough: true }) response: express.Response) {
+    response.clearCookie('jwt');
+    
+    return { message: 'Déconnexion réussie' };
+  }
 }
