@@ -1,98 +1,159 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# API - Gestion des Surveillances d'Examens
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Bienvenue sur le backend de l'application de gestion des surveillances. Cette API REST permet de gérer les utilisateurs (surveillants), les examens, les salles et les inscriptions via un système d'authentification sécurisé et hiérarchisé (Admin vs User).
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## 🛠 Stack Technique
 
-## Description
+Ce projet est construit avec des technologies modernes et robustes :
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+* **NestJS** : Framework Node.js progressif pour construire des applications serveurs efficaces et scalables.
+* **Prisma ORM** : Outil de gestion de base de données nouvelle génération (Type-safe).
+* **PostgreSQL** : Base de données relationnelle (hébergée via Docker).
+* **Passport & JWT** : Gestion de l'authentification via Tokens stockés dans des Cookies HttpOnly (Sécurité XSS).
+* **Docker** : Pour la conteneurisation de la base de données.
 
-## Project setup
+---
 
-```bash
-$ npm install
-```
+## 📚 Modèle de Données (Base de données)
 
-## Compile and run the project
+L'application repose sur 5 tables principales :
 
-```bash
-# development
-$ npm run start
+1.  **Admins** : Les administrateurs du système. Ils ont tous les droits (création d'examens, gestion des salles, etc.).
+2.  **Users** : Les surveillants. Ils peuvent consulter le planning et s'inscrire aux examens.
+3.  **Exams** : Les sessions d'examens (Titre, Date de début/fin, Cycle, Places disponibles).
+4.  **Rooms** : Les salles physiques où se déroulent les examens.
+5.  **Registrations** : Table de liaison entre `User` et `Exam`. Elle gère le statut de l'inscription et permet d'éviter les doublons ou le dépassement de quota.
 
-# watch mode
-$ npm run start:dev
+---
 
-# production mode
-$ npm run start:prod
-```
+## 🚀 Installation et Configuration
 
-## Run tests
+### 1. Prérequis
 
-```bash
-# unit tests
-$ npm run test
+Assurez-vous d'avoir installé :
+* Node.js (LTS recommandé)
+* Docker & Docker Compose (pour la BDD)
 
-# e2e tests
-$ npm run test:e2e
+### 2. Installation des dépendances
 
-# test coverage
-$ npm run test:cov
-```
+    npm install
 
-## Deployment
+### 3. Configuration des variables d'environnement
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+Le projet ne peut pas démarrer sans configuration.
+1.  Dupliquez le fichier `.env.sample` (s'il existe) ou créez un fichier `.env` à la racine.
+2.  Ajoutez-y les variables suivantes :
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+    # Connexion à la base de données (Format Prisma)
+    DATABASE_URL="postgresql://johndoe:randompassword@localhost:5432/mydb?schema=public"
 
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
+    # Secret pour signer les tokens JWT (Mettre une phrase longue et complexe)
+    JWT_SECRET="votre_secret_tres_securise_ici"
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+    # Configuration pour le Seed de l'Admin (Création du premier compte)
+    ADMIN_EMAIL="admin@ecole.fr"
+    ADMIN_PASSWORD="password_admin_securise"
 
-## Resources
+    # Environnement (production ou development)
+    NODE_ENV="development"
 
-Check out a few resources that may come in handy when working with NestJS:
+### 4. Lancement de la Base de Données
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+Lancez le conteneur Docker PostgreSQL configuré dans le `docker-compose.yml` :
 
-## Support
+    docker-compose up -d
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+### 5. Migrations Prisma
 
-## Stay in touch
+Mettez à jour la structure de la base de données pour qu'elle corresponde au schéma du code :
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+    npx prisma migrate dev
 
-## License
+---
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+## 🌱 Gestion des Données (Seeding & Nettoyage)
+
+Des scripts sont disponibles pour peupler la base de données avec des données de test ou de configuration initiale.
+
+### Initialisation de l'Admin
+Crée le compte administrateur défini dans le `.env`. À lancer au tout début.
+
+    npx prisma db seed
+
+### Peuplement des Salles (Rooms)
+Ajoute une liste de salles prédéfinies (Amphis, Salles de TP...) pour éviter de les saisir à la main.
+
+    npm run seed:rooms
+
+### Peuplement des Surveillants (Users)
+Crée une dizaine d'utilisateurs fictifs (Jean Dupont, Marie Curie...) pour tester les inscriptions.
+
+    npm run seed:users
+
+### 🧹 Nettoyage de la Base (Reset)
+Vide toutes les données (Inscriptions, Examens, Salles, Users) **sauf l'Admin**. Utile pour repartir à zéro sans tout casser.
+
+    npm run db:clean
+
+---
+
+## ▶️ Démarrage du Serveur
+
+Une fois la configuration terminée :
+
+**Mode Développement (avec rechargement automatique) :**
+
+    npm run start:dev
+
+**Mode Production :**
+
+    npm run build
+    npm run start:prod
+
+L'API sera accessible par défaut sur : `http://localhost:3333`
+
+---
+
+## 📡 Documentation des Endpoints API
+
+L'API est protégée. La plupart des routes nécessitent d'être connecté (Cookie JWT).
+
+### 🔐 Authentification (Auth)
+
+* `POST /auth/login` : Connexion Admin (Email + Password). Renvoie un cookie HttpOnly.
+* `POST /auth/login-user` : Connexion Surveillant (Email uniquement). Renvoie un cookie HttpOnly.
+* `POST /auth/logout` : Déconnexion (Supprime le cookie).
+
+### 👥 Utilisateurs (Users) - Surveillants
+
+* `GET /users` : Liste tous les surveillants (Admin seulement).
+* `GET /users/:id` : Détails d'un surveillant.
+* `POST /users` : Créer un surveillant.
+* `PATCH /users/:id` : Modifier un surveillant.
+* `DELETE /users/:id` : Supprimer un surveillant.
+
+### 📅 Examens (Exams)
+
+* `GET /exams` : Liste des examens (Accessible à tous les connectés).
+* `GET /exams/:id` : Détails d'un examen.
+* `POST /exams` : Créer un examen (Admin).
+* `PATCH /exams/:id` : Modifier un examen (Admin).
+* `DELETE /exams/:id` : Supprimer un examen (Admin).
+
+### 📝 Inscriptions (Registrations)
+
+* `POST /registrations` : S'inscrire à un examen.
+    * *User* : S'inscrit lui-même automatiquement.
+    * *Admin* : Doit fournir un `userId` pour inscrire quelqu'un.
+* `GET /registrations` : Voir les inscriptions.
+    * *Admin* : Voit tout (avec emails).
+    * *User* : Voit ses inscriptions et ses collègues (emails masqués).
+* `PATCH /registrations/:id` : Modifier une inscription (Salle, horaires aménagés) (Admin).
+* `DELETE /registrations/:id` : Désinscrire quelqu'un (Admin).
+
+### 🏫 Salles (Rooms)
+
+* `GET /rooms` : Liste des salles (Accessible à tous).
+* `POST /rooms` : Créer une salle (Admin).
+* `PATCH /rooms/:id` : Renommer une salle (Admin).
+* `DELETE /rooms/:id` : Supprimer une salle (Admin).
