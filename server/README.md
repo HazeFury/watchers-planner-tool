@@ -1,10 +1,12 @@
 # API - Gestion des Surveillances d'Examens
 
-Bienvenue sur le backend de l'application de gestion des surveillances. Cette API REST permet de gérer les utilisateurs (surveillants), les examens, les salles et les inscriptions via un système d'authentification sécurisé et hiérarchisé (Admin vs User).
+Bienvenue sur le backend de l'application de gestion des surveillances. Cette API REST permet de gérer les utilisateurs (surveillants), les examens, les salles et les inscriptions via un système d'authentification sécurisé et hiérarchisé.
 
 ## 🛠 Stack Technique
 
 Ce projet est construit avec des technologies modernes et robustes :
+
+![My Skills](https://skillicons.dev/icons?i=nest,prisma,postgres,ts,docker)
 
 * **NestJS** : Framework Node.js progressif pour construire des applications serveurs efficaces et scalables.
 * **Prisma ORM** : Outil de gestion de base de données nouvelle génération (Type-safe).
@@ -36,26 +38,30 @@ Assurez-vous d'avoir installé :
 
 ### 2. Installation des dépendances
 
+Depuis le dossier `/server`, executez la commande :
+
     npm install
 
 ### 3. Configuration des variables d'environnement
 
 Le projet ne peut pas démarrer sans configuration.
-1.  Dupliquez le fichier `.env.sample` (s'il existe) ou créez un fichier `.env` à la racine.
-2.  Ajoutez-y les variables suivantes :
+1.  Dupliquez le fichier `server/.env.sample` et renommez le `server/.env`.
+2.  Modifier la valeur des variables suivantes :
 
-    # Connexion à la base de données (Format Prisma)
-    DATABASE_URL="postgresql://johndoe:randompassword@localhost:5432/mydb?schema=public"
+	```bash
+	# Connexion à la base de données (Format Prisma)
+	DATABASE_URL="postgresql://DB_USER:DB_PASSWORD@localhost:PORT/DB_NAME?schema=public"
 
-    # Secret pour signer les tokens JWT (Mettre une phrase longue et complexe)
-    JWT_SECRET="votre_secret_tres_securise_ici"
+	# Secret pour signer les tokens JWT (Mettre une phrase longue et complexe)
+	JWT_SECRET="votre_secret_tres_securise_ici"
 
-    # Configuration pour le Seed de l'Admin (Création du premier compte)
-    ADMIN_EMAIL="admin@ecole.fr"
-    ADMIN_PASSWORD="password_admin_securise"
+	# Configuration pour le Seed de l'Admin (Création du premier compte)
+	ADMIN_EMAIL="admin@ecole.fr"
+	ADMIN_PASSWORD="password_admin_securise"
 
-    # Environnement (production ou development)
-    NODE_ENV="development"
+	# Environnement (production ou development)
+	NODE_ENV="development"
+	```
 
 ### 4. Lancement de la Base de Données
 
