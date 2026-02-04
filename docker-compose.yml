@@ -1,0 +1,36 @@
+services:
+  # 1. BDD
+  db:
+    image: postgres:15-alpine
+    container_name: episur_postgres
+    restart: always
+    ports:
+      - "5434:5432"
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # 2. Backend (NestJS)
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: episur_server
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    # On construit l'URL dynamiquement pour le conteneur
+    environment:
+      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}?schema=public
+      - PORT=3000
+    # Pour le dev : on monte le code pour le hot-reload
+    volumes:
+      - ./server:/usr/src/app
+      - /usr/src/app/node_modules
+
+volumes:
+  postgres_data:
