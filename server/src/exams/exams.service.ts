@@ -21,6 +21,25 @@ export class ExamsService {
     });
   }
 
+  async findAllFromToday() {
+    const today = new Date();
+    
+    return this.prisma.exam.findMany({
+      where: {
+        startTime: { gte: today },
+        isArchived: false,
+      },
+      orderBy: {
+        startTime: 'asc',
+      },
+      include: {
+        _count: {
+          select: { registrations: true }
+        }
+      }
+    });
+  }
+
   async findOne(id: number) {
     const exam = await this.prisma.exam.findUnique({
       where: { id },

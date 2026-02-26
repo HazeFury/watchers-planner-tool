@@ -22,6 +22,7 @@
 	"seed:admin": "ts-node prisma/seeds/seed-admin.ts",
 	"seed:rooms": "ts-node prisma/seeds/seed-rooms.ts",
     "seed:users": "ts-node prisma/seeds/seed-users.ts",
+	"seed:exams": "ts-node prisma/seeds/seed-exams.ts",
     "db:clean": "ts-node prisma/seeds/reset-db.ts"
   },
   "dependencies": {
