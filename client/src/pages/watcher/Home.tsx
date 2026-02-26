@@ -3,6 +3,8 @@ import { useFetch } from '../../hooks/useFetch';
 import { useAuth } from '../../context/AuthContext';
 import { ExamCard, type Exam } from '../../components/watcher/ExamCard';
 import { LoadingOverlay } from '../../components/ui/LoadingOverlay';
+import { RefreshCw } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
 export default function Home() {
@@ -29,9 +31,20 @@ export default function Home() {
 
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto">
-      <h1 className="text-3xl font-black text-slate-800 mb-8 tracking-tight">
-        Prochaines surveillances
-      </h1>
+      <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+        <h1 className="text-3xl font-black text-slate-800 tracking-tight">
+          Prochaines surveillances
+        </h1>
+        
+        <Button 
+          onClick={() => fetchExams()} 
+          disabled={isLoading}
+          className="bg-blue-600 hover:bg-blue-700 text-white w-full md:w-auto flex items-center gap-2"
+        >
+          <RefreshCw className="h-4 w-4" />
+          Rafraîchir
+        </Button>
+      </div>
       
       {isLoading && <LoadingOverlay message="Récupération des examens..." />}
       
