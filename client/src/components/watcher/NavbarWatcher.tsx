@@ -12,16 +12,21 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useFetch } from '../../hooks/useFetch';
+import { toast } from "sonner";
+
+
 
 export function NavbarWatcher() {
-const navigate = useNavigate();
-  const { logout } = useAuth();
+	const { user } = useAuth();
+	const navigate = useNavigate();
+  	const { logout } = useAuth();
   
   const { execute: logoutApi, isLoading } = useFetch('POST', '/auth/logout');
 
   const handleLogout = async () => {
     await logoutApi();
     logout();
+	toast.success("Déconnexion réussie. À bientôt !");
     navigate('/login');
   };
   return (
@@ -89,12 +94,14 @@ const navigate = useNavigate();
 
           <div className="mt-auto border-t pt-4">
             <SheetClose asChild>
-              <Link to="/dashboard">
-                <Button variant="outline" className="w-full border-slate-300 bg-slate-50 hover:bg-slate-100 text-slate-700">
-                  <LayoutDashboard className="mr-2 h-4 w-4" />
-                  Accès Dashboard Admin
-                </Button>
+				{user && user.role === "admin" && (
+				<Link to="/dashboard">
+            		<Button variant="outline" className="w-full border-slate-300 bg-slate-50 hover:bg-slate-100 text-slate-700">
+                  		<LayoutDashboard className="mr-2 h-4 w-4" />
+                  			Accès Dashboard Admin
+                	</Button>
               </Link>
+				)}
             </SheetClose>
             <p className="text-xs text-center text-slate-400 mt-4">
               Version 0.1.0 - Epita Lyon
