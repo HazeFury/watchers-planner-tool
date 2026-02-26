@@ -1,6 +1,7 @@
 import { Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useEffect } from 'react';
+import { LoadingOverlay } from '../ui/LoadingOverlay';
 import { toast } from 'sonner';
 
 interface ProtectedRouteProps {
@@ -17,7 +18,7 @@ export const ProtectedRoute = ({ allowedRole }: ProtectedRouteProps) => {
   }, [user, allowedRole, isLoadingAuth]);
 
   if (isLoadingAuth) {
-    return <div className="min-h-screen flex items-center justify-center">Chargement...</div>;
+    return <LoadingOverlay message="Chargement..." />;
   }
 
   if (!user) {

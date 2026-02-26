@@ -32,6 +32,10 @@ export const useFetch = (method: 'GET' | 'POST' | 'PATCH' | 'DELETE', endpoint: 
 
       setStatus(response.status);
 
+	  if (response.status === 401 && endpoint !== '/auth/check') {
+        window.dispatchEvent(new Event('auth:unauthorized'));
+      }
+
       let responseData = null;
       try {
         responseData = await response.json();

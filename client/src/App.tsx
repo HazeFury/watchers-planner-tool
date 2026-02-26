@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom';
-import Home from './pages/Home';
+import Home from './pages/watcher/Home';
 import Dashboard from './pages/admin/Dashboard';
 import Login from './pages/login/Login';
 import { NavbarWatcher } from './components/watcher/NavbarWatcher';
