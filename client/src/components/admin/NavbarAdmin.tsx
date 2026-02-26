@@ -17,8 +17,22 @@ import {
   SheetTrigger,
   SheetClose,
 } from "@/components/ui/sheet"
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+import { useFetch } from '../../hooks/useFetch';
 
 export function NavbarAdmin() {
+	const navigate = useNavigate();
+  const { logout } = useAuth();
+  
+  const { execute: logoutApi, isLoading } = useFetch('POST', '/auth/logout');
+
+  const handleLogout = async () => {
+    await logoutApi();
+    logout();
+    navigate('/login');
+  };
+
   return (
     <header className="h-16 px-4 flex items-center justify-between bg-slate-800 text-white shadow-md">
       
@@ -109,11 +123,13 @@ export function NavbarAdmin() {
         </div>
       </div>
 
-      <Button 
+      <Button
+	  	onClick={handleLogout} 
+        disabled={isLoading}
         variant="ghost" 
         className="text-slate-300 hover:text-white hover:bg-red-900/50 hover:text-red-200 transition-colors"
       >
-        <span className="hidden sm:inline mr-2">Se déconnecter</span>
+        <span className="hidden sm:inline mr-2">{isLoading ? "Déconnexion..." : "Se déconnecter"}</span>
         <LogOut className="h-5 w-5" />
       </Button>
 
