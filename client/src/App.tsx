@@ -6,6 +6,7 @@ import { NavbarWatcher } from './components/watcher/NavbarWatcher';
 import { NavbarAdmin } from './components/admin/NavbarAdmin';
 import { AuthProvider } from './context/AuthContext';
 import { ProtectedRoute } from './components/protection/ProtectedRoute';
+import { Toaster } from "@/components/ui/sonner";
 
 const PublicLayout = () => (
   <div className="min-h-screen bg-white">
@@ -28,17 +29,14 @@ function App() {
     <AuthProvider>
       <BrowserRouter>
         <Routes>
-          {/* Route publique (accessible sans être connecté) */}
           <Route path="/login" element={<Login />} />
 
-          {/* Routes protégées "User" (ou tout le monde) */}
           <Route element={<ProtectedRoute />}>
             <Route element={<PublicLayout />}>
               <Route path="/" element={<Home />} />
             </Route>
           </Route>
 
-          {/* Routes protégées "Admin" (strictement admin) */}
           <Route element={<ProtectedRoute allowedRole="admin" />}>
             <Route path="/dashboard" element={<AdminLayout />}>
               <Route index element={<Dashboard />} />
@@ -46,6 +44,7 @@ function App() {
           </Route>
         </Routes>
       </BrowserRouter>
+	  <Toaster position="bottom-right" richColors />
     </AuthProvider>
   );
 }

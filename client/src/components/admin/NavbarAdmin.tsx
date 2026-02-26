@@ -20,6 +20,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useFetch } from '../../hooks/useFetch';
+import { toast } from "sonner";
 
 export function NavbarAdmin() {
 	const navigate = useNavigate();
@@ -30,6 +31,7 @@ export function NavbarAdmin() {
   const handleLogout = async () => {
     await logoutApi();
     logout();
+	toast.success("Déconnexion réussie. À bientôt !");
     navigate('/login');
   };
 
