@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { useFetch } from '../hooks/useFetch';
+import { toast } from 'sonner';
 
 interface User {
   userId: number;
@@ -34,6 +35,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     verifySession();
   }, [execute]);
+
+  useEffect(() => {
+    const handleUnauthorized = () => {
+      setUser(null);
+      toast.error("Votre session a expiré, veuillez vous reconnecter.");
+    };
+
+    window.addEventListener('auth:unauthorized', handleUnauthorized);
+
+    return () => window.removeEventListener('auth:unauthorized', handleUnauthorized);
+  }, []);
 
   const login = (userData: User) => setUser(userData);
   const logout = () => setUser(null);

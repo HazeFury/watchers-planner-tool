@@ -1,34 +1,63 @@
 import { useEffect } from 'react';
 import { useFetch } from '../../hooks/useFetch';
+import { useAuth } from '../../context/AuthContext';
+import { ExamCard, type Exam } from '../../components/watcher/ExamCard';
+import { LoadingOverlay } from '../../components/ui/LoadingOverlay';
+import { toast } from 'sonner';
 
 export default function Home() {
-  const { execute, data, isLoading, error } = useFetch('GET', '/exams/upcoming');
+  const { user } = useAuth(); 
+  
+  const { execute: fetchExams, data, isLoading, error } = useFetch('GET', '/exams/upcoming');
+  const { execute: registerToExam } = useFetch('POST', '/registrations');
 
-  // Au montage du composant, on lance la requête
   useEffect(() => {
-    execute();
-  }, [execute]);
+    fetchExams();
+  }, [fetchExams]);
 
-  // Juste pour le débug, on logue la data quand elle arrive
-  useEffect(() => {
-    if (data) {
-      console.log('📅 Examens récupérés depuis la BDD :', data);
+  const handleRegisterClick = async (examId: number) => {
+    const res = await registerToExam({ body: { examId } });
+    
+    if (res.success) {
+      toast.success("Inscription validée avec succès !");
+      fetchExams(); 
+    } else {
+      toast.error(res.error || "Impossible de s'inscrire à cet examen.");
+      fetchExams();
     }
-  }, [data]);
+  };
 
   return (
-    <div className="p-4 md:p-8">
-      <h1 className="text-2xl font-bold text-slate-800 mb-6">
+    <div className="p-4 md:p-8 max-w-7xl mx-auto">
+      <h1 className="text-3xl font-black text-slate-800 mb-8 tracking-tight">
         Prochaines surveillances
       </h1>
       
-      {isLoading && <p className="text-slate-500">Chargement des examens en cours...</p>}
+      {isLoading && <LoadingOverlay message="Récupération des examens..." />}
       
-      {error && <p className="text-red-500 bg-red-50 p-3 rounded-md border border-red-200">{error}</p>}
+      {error && (
+        <div className="bg-red-50 text-red-600 p-4 rounded-xl border border-red-200">
+          <p className="font-medium">Une erreur est survenue :</p>
+          <p>{error}</p>
+        </div>
+      )}
       
-      {!isLoading && !error && data && (
-        <div className="bg-emerald-50 text-emerald-700 p-4 rounded-md border border-emerald-200">
-          <p>✅ Les données sont là ! Ouvre la console (F12) pour voir les examens.</p>
+      {!isLoading && !error && data && data.length === 0 && (
+        <div className="bg-slate-50 text-slate-600 p-8 rounded-xl border border-slate-200 text-center">
+          <p className="text-lg">Aucun examen n'est prévu prochainement. Reposez-vous bien !</p>
+        </div>
+      )}
+
+      {!isLoading && !error && data && data.length > 0 && (
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+          {data.map((exam: Exam) => (
+            <ExamCard 
+              key={exam.id} 
+              exam={exam} 
+              currentUserId={user?.userId || 0} 
+              onRegisterClick={handleRegisterClick} 
+            />
+          ))}
         </div>
       )}
     </div>

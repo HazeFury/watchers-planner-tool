@@ -33,8 +33,16 @@ export class ExamsService {
         startTime: 'asc',
       },
       include: {
-        _count: {
-          select: { registrations: true }
+        registrations: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+              }
+            }
+          }
         }
       }
     });
