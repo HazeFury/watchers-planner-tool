@@ -8,6 +8,7 @@ import { AuthProvider } from './context/AuthContext';
 import { ProtectedRoute } from './components/protection/ProtectedRoute';
 import { Toaster } from "@/components/ui/sonner";
 import Registrations from './pages/watcher/Registrations';
+import Profile from './pages/watcher/Profile';
 
 const PublicLayout = () => (
   <div className="min-h-screen bg-white">
@@ -36,6 +37,7 @@ function App() {
             <Route element={<PublicLayout />}>
               <Route path="/" element={<Home />} />
 			  <Route path="/my-registrations" element={<Registrations />} />
+			  <Route path="/profile" element={<Profile />} />
             </Route>
           </Route>
 
