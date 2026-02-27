@@ -1,8 +1,18 @@
-import { Controller, Post, Body, Res } from '@nestjs/common';
+import { Controller, Post, Body, Get, Res, UseGuards, Request } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { LoginUserDto } from './dto/login-user.dto';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import express from 'express';
+import { Request as ExpressRequest } from 'express';
+
+interface RequestWithUser extends ExpressRequest {
+  user: {
+    userId: number;
+    email: string;
+    role: string;
+  };
+}
 
 @Controller('auth')
 export class AuthController {
@@ -19,7 +29,10 @@ export class AuthController {
       maxAge: 4 * 60 * 60 * 1000, // (4h)
     });
 
-    return { message: 'Connexion réussie' };
+   	return { 
+      message: 'Connexion réussie', 
+      admin: result.admin
+    };
   }
 
   @Post('login-user')
@@ -37,6 +50,12 @@ export class AuthController {
       message: 'Authentification réussie', 
       user: result.user 
     };
+  }
+
+  @Get('check')
+  @UseGuards(JwtAuthGuard)
+  checkAuth(@Request() req: RequestWithUser) {
+    return req.user; 
   }
 
   @Post('logout')

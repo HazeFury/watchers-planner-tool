@@ -38,6 +38,18 @@ export class UsersService {
   return user;
 }
 
+async getProfile(userId: number) {
+    return this.prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        firstName: true,
+        lastName: true,
+        email: true,
+        contractHours: true,
+      }
+    });
+  }
+
   // MISE À JOUR
   async update(id: number, updateUserDto: UpdateUserDto) {
   try {

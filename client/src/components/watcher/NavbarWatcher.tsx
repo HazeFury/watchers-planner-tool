@@ -9,8 +9,26 @@ import {
   SheetTrigger,
   SheetClose,
 } from "@/components/ui/sheet"
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+import { useFetch } from '../../hooks/useFetch';
+import { toast } from "sonner";
+
+
 
 export function NavbarWatcher() {
+	const { user } = useAuth();
+	const navigate = useNavigate();
+  	const { logout } = useAuth();
+  
+  const { execute: logoutApi, isLoading } = useFetch('POST', '/auth/logout');
+
+  const handleLogout = async () => {
+    await logoutApi();
+    logout();
+	toast.success("Déconnexion réussie. À bientôt !");
+    navigate('/login');
+  };
   return (
     <nav className="h-16 px-4 flex items-center justify-between bg-sky-100 border-b border-sky-200 shadow-sm">
       
@@ -47,7 +65,7 @@ export function NavbarWatcher() {
             </SheetClose>
 
             <SheetClose asChild>
-              <Link to="/mes-inscriptions">
+              <Link to="/my-registrations">
                 <Button variant="ghost" className="w-full justify-start text-lg h-12">
                   📅 Mes Inscriptions
                 </Button>
@@ -55,7 +73,7 @@ export function NavbarWatcher() {
             </SheetClose>
             
             <SheetClose asChild>
-              <Link to="/profil">
+              <Link to="/profile">
                 <Button variant="ghost" className="w-full justify-start text-lg h-12">
                   👤 Mon Profil
                 </Button>
@@ -64,20 +82,26 @@ export function NavbarWatcher() {
 
             <div className="h-px bg-slate-100 my-2" />
 
-            <Button variant="ghost" className="w-full justify-start text-lg h-12 text-red-600 hover:text-red-700 hover:bg-red-50">
+            <Button 
+				onClick={handleLogout} 
+        		disabled={isLoading}
+				variant="ghost" 
+				className="w-full justify-start text-lg h-12 text-red-600 hover:text-red-700 hover:bg-red-50">
               <LogOut className="mr-2 h-5 w-5" />
-              Déconnexion
+              {isLoading ? "Déconnexion..." : "Se déconnecter"}
             </Button>
           </div>
 
           <div className="mt-auto border-t pt-4">
             <SheetClose asChild>
-              <Link to="/dashboard">
-                <Button variant="outline" className="w-full border-slate-300 bg-slate-50 hover:bg-slate-100 text-slate-700">
-                  <LayoutDashboard className="mr-2 h-4 w-4" />
-                  Accès Dashboard Admin
-                </Button>
+				{user && user.role === "admin" && (
+				<Link to="/dashboard">
+            		<Button variant="outline" className="w-full border-slate-300 bg-slate-50 hover:bg-slate-100 text-slate-700">
+                  		<LayoutDashboard className="mr-2 h-4 w-4" />
+                  			Accès Dashboard Admin
+                	</Button>
               </Link>
+				)}
             </SheetClose>
             <p className="text-xs text-center text-slate-400 mt-4">
               Version 0.1.0 - Epita Lyon
