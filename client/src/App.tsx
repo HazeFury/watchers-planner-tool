@@ -7,6 +7,7 @@ import { NavbarAdmin } from './components/admin/NavbarAdmin';
 import { AuthProvider } from './context/AuthContext';
 import { ProtectedRoute } from './components/protection/ProtectedRoute';
 import { Toaster } from "@/components/ui/sonner";
+import Registrations from './pages/watcher/Registrations';
 
 const PublicLayout = () => (
   <div className="min-h-screen bg-white">
@@ -34,6 +35,7 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route element={<PublicLayout />}>
               <Route path="/" element={<Home />} />
+			  <Route path="/my-registrations" element={<Registrations />} />
             </Route>
           </Route>
 

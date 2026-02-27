@@ -36,13 +36,15 @@ export class RegistrationsController {
     return this.registrationsService.create(targetUserId, createRegistrationDto);
   }
   @Get()
-  findAll(@Request() req: RequestWithUser) {
-    
-    if (req.user.role === 'admin') {
+  @Roles('admin')
+  findAll() {
       return this.registrationsService.findAll();
-    } else {
-      return this.registrationsService.findAllForUser();
-    }
+  }
+
+  @Get('mine')
+  @UseGuards(JwtAuthGuard)
+  findMyRegistrations(@Request() req: RequestWithUser) {
+    return this.registrationsService.findUpcomingForUser(req.user.userId);
   }
 
   @Get(':id')

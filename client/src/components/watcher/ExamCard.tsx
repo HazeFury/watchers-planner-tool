@@ -97,7 +97,7 @@ export const ExamCard = ({ exam, currentUserId, onRegisterClick }: ExamCardProps
       {/* BODY : LISTE DES SURVEILLANTS */}
       <div className="flex-grow">
         <div className="flex justify-between mb-2 pr-1">
-          <span className="text-sm font-black text-slate-800">Surveillant</span>
+          <span className="text-sm font-black text-slate-800">Surveillant(e)</span>
           <span className="text-sm font-black text-slate-800">Salle</span>
         </div>
 
