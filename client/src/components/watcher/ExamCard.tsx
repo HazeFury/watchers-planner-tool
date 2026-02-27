@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { formatTime } from "@/utils/formatTime";
 
 interface User {
   id: number;
@@ -41,10 +42,6 @@ export const ExamCard = ({ exam, currentUserId, onRegisterClick }: ExamCardProps
   const isFull = exam.registrations.length >= exam.maxWatchers;
 
   // --- 2. FORMATAGE DES DATES ---
-  const formatTime = (dateStr: string) => {
-    return new Date(dateStr).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }).replace(':', 'h');
-  };
-
   const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
   const examDate = new Date(exam.startTime);
   const dateFormatted = capitalize(examDate.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }));

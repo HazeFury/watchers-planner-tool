@@ -22,7 +22,7 @@ interface MyRegistration {
   startTime: string | null; 
   endTime: string | null;
   exam: ExamContext;
-  room: Room | null; // La fameuse salle, qui peut être null au début
+  room: Room | null;
 }
 
 export default function Registrations() {
