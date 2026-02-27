@@ -1,17 +1,22 @@
 import { Button } from "@/components/ui/button";
 
-// On définit le type de nos données pour que TypeScript nous aide
 interface User {
   id: number;
   firstName: string;
   lastName: string;
 }
 
+interface Room {
+  id: number;
+  name: string;
+}
+
 interface Registration {
   id: number;
-  startTime: string; // Les dates arrivent en string depuis l'API JSON
+  startTime: string;
   endTime: string;
   user: User;
+  room: Room | null;
 }
 
 export interface Exam {
@@ -26,8 +31,8 @@ export interface Exam {
 
 interface ExamCardProps {
   exam: Exam;
-  currentUserId: number; // Pour savoir si ON est inscrit
-  onRegisterClick?: (examId: number) => void; // On préparera l'action d'inscription plus tard
+  currentUserId: number;
+  onRegisterClick?: (examId: number) => void;
 }
 
 export const ExamCard = ({ exam, currentUserId, onRegisterClick }: ExamCardProps) => {
@@ -62,7 +67,7 @@ export const ExamCard = ({ exam, currentUserId, onRegisterClick }: ExamCardProps
     cardBorder = "border-blue-500 shadow-sm";
     btnColor = "bg-blue-600 hover:bg-blue-700 text-white";
     btnText = "INSCRIT(E)";
-    btnDisabled = true; // On désactive pour ne pas cliquer 2 fois
+    btnDisabled = true;
   } else if (isFull) {
     cardBorder = "border-red-500 shadow-sm";
     btnColor = "bg-red-600 text-white opacity-90 cursor-not-allowed";
@@ -71,72 +76,83 @@ export const ExamCard = ({ exam, currentUserId, onRegisterClick }: ExamCardProps
   }
 
   return (
-    <div className={`bg-white rounded-xl border-2 p-5 flex flex-col ${cardBorder}`}>
-      {/* HEADER */}
-      <div className="flex justify-between items-start mb-2">
-        <h3 className="text-xl font-black text-slate-800 tracking-tight">{dateFormatted}</h3>
-        <span className="text-slate-600 font-medium">{exam.cycle}</span>
-      </div>
+    <div className={`bg-white rounded-xl border-2 p-5 flex flex-col h-full ${cardBorder}`}>
+      {/* HEADER & SUB-HEADER */}
+      <div>
+        <div className="flex justify-between items-start mb-2">
+          <h3 className="text-xl font-black text-slate-800 tracking-tight">{dateFormatted}</h3>
+          <span className="text-slate-600 font-medium">{exam.cycle}</span>
+        </div>
 
-      {/* SUB-HEADER */}
-      <div className="flex justify-between items-center mb-3">
-        <span className="text-slate-700 text-lg">{globalTimeStr}</span>
-        <span className="text-slate-700 font-medium">
-          {exam.registrations.length}/{exam.maxWatchers} pers
-        </span>
-      </div>
+        <div className="flex justify-between items-center mb-3">
+          <span className="text-slate-700 text-lg">{globalTimeStr}</span>
+          <span className="text-slate-700 font-medium">
+            {exam.registrations.length}/{exam.maxWatchers} pers
+          </span>
+        </div>
 
-      <hr className="border-slate-300 border-t-2 mb-3" />
+        <hr className="border-slate-300 border-t-2 mb-3" />
+      </div>
 
       {/* BODY : LISTE DES SURVEILLANTS */}
-      <div className="flex-grow flex flex-col space-y-1 mb-4">
-        {slots.map((reg, index) => {
-          if (!reg) {
-            // Place vide
-            return <div key={`empty-${index}`} className="text-slate-800 text-lg">-</div>;
-          }
+      <div className="flex-grow">
+        <div className="flex justify-between mb-2 pr-1">
+          <span className="text-sm font-black text-slate-800">Surveillant</span>
+          <span className="text-sm font-black text-slate-800">Salle</span>
+        </div>
 
-          // Place occupée : on formate le nom (ex: "Pierre H")
-          const nameStr = `${reg.user.firstName} ${reg.user.lastName.charAt(0)}`;
-          const isMe = reg.user.id === currentUserId;
-          
-          // Calcul du tiers temps
-		  // On s'assure que la variable existe ET qu'elle est différente de l'examen
-          const hasSpecificStart = reg.startTime && reg.startTime !== exam.startTime;
-          const hasSpecificEnd = reg.endTime && reg.endTime !== exam.endTime;
-          const isTiersTemps = hasSpecificStart || hasSpecificEnd;
+        <div className="space-y-1">
+          {slots.map((reg, index) => {
+            if (!reg) {
+              return <div key={`empty-${index}`} className="text-slate-800 text-lg">-</div>;
+            }
 
-          // On sécurise les dates : si l'inscription n'a pas d'horaire, on prend celui de l'examen
-          const actualStartTime = reg.startTime || exam.startTime;
-          const actualEndTime = reg.endTime || exam.endTime;
+			// Formatage du nom 
+            const nameStr = `${reg.user.firstName} ${reg.user.lastName.charAt(0)}`;
+            const isMe = reg.user.id === currentUserId;
+            
+			// Calcul tiers temps
+            const hasSpecificStart = reg.startTime && reg.startTime !== exam.startTime;
+            const hasSpecificEnd = reg.endTime && reg.endTime !== exam.endTime;
+            const isTiersTemps = hasSpecificStart || hasSpecificEnd;
 
-          const specificTimeStr = isTiersTemps 
-            ? ` (${formatTime(actualStartTime)} - ${formatTime(actualEndTime)})` 
-            : '';
+            const actualStartTime = reg.startTime || exam.startTime;
+            const actualEndTime = reg.endTime || exam.endTime;
 
-          // Couleurs spécifiques
-          let textColor = "text-slate-800";
-          if (isMe) textColor = "text-blue-600 font-medium";
-          else if (isTiersTemps) textColor = "text-orange-500";
+            const specificTimeStr = isTiersTemps 
+              ? ` (${formatTime(actualStartTime)} - ${formatTime(actualEndTime)})` 
+              : '';
+			
+			// Mise en couleur
+            let textColor = "text-slate-800";
+            if (isMe) textColor = "text-blue-600 font-medium";
+            else if (isTiersTemps) textColor = "text-orange-500";
 
-          return (
-            <div key={reg.id} className={`${textColor} text-lg`}>
-              - {nameStr}{specificTimeStr}
-            </div>
-          );
-        })}
+            return (
+              <div key={reg.id} className="flex justify-between items-center text-lg">
+                <div className={`${textColor}`}>
+                  - {nameStr}{specificTimeStr}
+                </div>
+                <div className="font-medium text-slate-700 text-right min-w-[3rem]">
+                  {reg.room ? reg.room.name : '-'}
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </div>
 
-      <hr className="border-slate-300 border-t-2 mb-4" />
-
-      {/* FOOTER : BOUTON */}
-      <Button 
-        className={`w-full text-base font-bold rounded-lg py-6 ${btnColor}`}
-        disabled={btnDisabled}
-        onClick={() => !btnDisabled && onRegisterClick && onRegisterClick(exam.id)}
-      >
-        {btnText}
-      </Button>
+      {/* FOOTER */}
+      <div className="mt-4 flex-none">
+        <hr className="border-slate-300 border-t-2 mb-4" />
+        <Button 
+          className={`w-full h-12 text-base font-bold rounded-lg ${btnColor}`} 
+          disabled={btnDisabled}
+          onClick={() => !btnDisabled && onRegisterClick && onRegisterClick(exam.id)}
+        >
+          {btnText}
+        </Button>
+      </div>
     </div>
-  );
+  )
 };
