@@ -3,7 +3,9 @@ import { useFetch } from '../../hooks/useFetch';
 import { useAuth } from '../../context/AuthContext';
 import { ExamCard, type Exam } from '../../components/watcher/ExamCard';
 import { LoadingOverlay } from '../../components/ui/LoadingOverlay';
+import { useConfirm } from '@/hooks/useConfirm';
 import { RefreshCw } from 'lucide-react';
+import { formatTime } from "@/utils/formatTime";
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
@@ -13,20 +15,51 @@ export default function Home() {
   const { execute: fetchExams, data, isLoading, error } = useFetch('GET', '/exams/upcoming');
   const { execute: registerToExam } = useFetch('POST', '/registrations');
 
+  const { confirm, ConfirmModal } = useConfirm();
+
   useEffect(() => {
     fetchExams();
   }, [fetchExams]);
 
-  const handleRegisterClick = async (examId: number) => {
-    const res = await registerToExam({ body: { examId } });
+  const handleRegisterClick = (examId: number) => {
+    const selectedExam = data.find((e: Exam) => e.id === examId);
     
-    if (res.success) {
-      toast.success("Inscription validée avec succès !");
-      fetchExams(); 
-    } else {
-      toast.error(res.error || "Impossible de s'inscrire à cet examen.");
-      fetchExams();
-    }
+    if (!selectedExam) return;
+
+    // 2. Formatage de la date 
+    const dateObj = new Date(selectedExam.startTime);
+    const dateStr = dateObj.toLocaleDateString('fr-FR', { 
+      weekday: 'long', 
+      day: 'numeric', 
+      month: 'long' 
+    });
+
+    const globalTimeStr = `${formatTime(selectedExam.startTime)} - ${formatTime(selectedExam.endTime)}`;
+
+    const message = (
+      <span>
+        Êtes-vous sûr de vouloir vous inscrire à la session du <strong className="text-slate-900 font-black">{dateStr} / {globalTimeStr}</strong> ?
+        <br /><br />
+        Une fois inscrit(e), seul un administrateur pourra annuler votre participation.
+      </span>
+    );
+
+	// On appelle confirm() avec notre texte, et on lui donne une fonction "callback"
+    confirm(
+	  message,
+      async () => {
+        // Ce bloc de code ne s'exécutera QUE si l'utilisateur clique sur "Confirmer"
+        const res = await registerToExam({ body: { examId } });
+        
+        if (res.success) {
+          toast.success("Inscription validée avec succès !");
+          fetchExams(); 
+        } else {
+          toast.error(res.error || "Impossible de s'inscrire à cet examen.");
+          fetchExams();
+        }
+      }
+    );
   };
 
   return (
@@ -73,6 +106,7 @@ export default function Home() {
           ))}
         </div>
       )}
+	  <ConfirmModal />
     </div>
   );
 }
