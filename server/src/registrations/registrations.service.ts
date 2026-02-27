@@ -61,12 +61,26 @@ export class RegistrationsService {
     });
   }
 
-  findAllForUser() {
+  async findUpcomingForUser(userId: number) {
+    const today = new Date();
+    
     return this.prisma.registration.findMany({
-      include: {
-        user: { select: { firstName: true, lastName: true } },
-        exam: true,
+      where: {
+        userId: userId,
+        exam: {
+          startTime: { gte: today },
+          isArchived: false,
+        }
       },
+      include: {
+        exam: true,
+		room: true,
+      },
+      orderBy: {
+        exam: {
+          startTime: 'asc',
+        }
+      }
     });
   }
 
