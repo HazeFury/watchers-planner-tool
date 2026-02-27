@@ -65,7 +65,7 @@ export function NavbarWatcher() {
             </SheetClose>
 
             <SheetClose asChild>
-              <Link to="/mes-inscriptions">
+              <Link to="/my-registrations">
                 <Button variant="ghost" className="w-full justify-start text-lg h-12">
                   📅 Mes Inscriptions
                 </Button>
@@ -73,7 +73,7 @@ export function NavbarWatcher() {
             </SheetClose>
             
             <SheetClose asChild>
-              <Link to="/profil">
+              <Link to="/profile">
                 <Button variant="ghost" className="w-full justify-start text-lg h-12">
                   👤 Mon Profil
                 </Button>

@@ -41,7 +41,8 @@ export class ExamsService {
                 firstName: true,
                 lastName: true,
               }
-            }
+            },
+			room: true,
           }
         }
       }
