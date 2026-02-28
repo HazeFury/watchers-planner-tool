@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { formatTime, formatTimeStartEnd, formatDateLetter } from "@/utils/date";
 
 interface User {
   id: number;
@@ -35,21 +36,20 @@ interface ExamCardProps {
   onRegisterClick?: (examId: number) => void;
 }
 
-export const ExamCard = ({ exam, currentUserId, onRegisterClick }: ExamCardProps) => {
+export const ExamCard = ({
+  exam,
+  currentUserId,
+  onRegisterClick,
+}: ExamCardProps) => {
   // --- 1. LOGIQUE D'ÉTAT ---
-  const isRegistered = exam.registrations.some((reg) => reg.user.id === currentUserId);
+  const isRegistered = exam.registrations.some(
+    (reg) => reg.user.id === currentUserId,
+  );
   const isFull = exam.registrations.length >= exam.maxWatchers;
 
   // --- 2. FORMATAGE DES DATES ---
-  const formatTime = (dateStr: string) => {
-    return new Date(dateStr).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }).replace(':', 'h');
-  };
-
-  const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
-  const examDate = new Date(exam.startTime);
-  const dateFormatted = capitalize(examDate.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }));
-
-  const globalTimeStr = `${formatTime(exam.startTime)} - ${formatTime(exam.endTime)}`;
+  const dateFormatted = formatDateLetter(exam.startTime);
+  const globalTimeStr = formatTimeStartEnd(exam.startTime, exam.endTime);
 
   // --- 3. PRÉPARATION DE LA LISTE DES PLACES ---
   // On crée un tableau de la taille exacte de maxWatchers
@@ -76,11 +76,15 @@ export const ExamCard = ({ exam, currentUserId, onRegisterClick }: ExamCardProps
   }
 
   return (
-    <div className={`bg-white rounded-xl border-2 p-5 flex flex-col h-full ${cardBorder}`}>
+    <div
+      className={`bg-slate-50 rounded-xl border-2 p-5 flex flex-col h-full ${cardBorder}`}
+    >
       {/* HEADER & SUB-HEADER */}
       <div>
         <div className="flex justify-between items-start mb-2">
-          <h3 className="text-xl font-black text-slate-800 tracking-tight">{dateFormatted}</h3>
+          <h3 className="text-xl font-black text-slate-800 tracking-tight">
+            {dateFormatted}
+          </h3>
           <span className="text-slate-600 font-medium">{exam.cycle}</span>
         </div>
 
@@ -97,44 +101,55 @@ export const ExamCard = ({ exam, currentUserId, onRegisterClick }: ExamCardProps
       {/* BODY : LISTE DES SURVEILLANTS */}
       <div className="flex-grow">
         <div className="flex justify-between mb-2 pr-1">
-          <span className="text-sm font-black text-slate-800">Surveillant(e)</span>
+          <span className="text-sm font-black text-slate-800">
+            Surveillant(e)
+          </span>
           <span className="text-sm font-black text-slate-800">Salle</span>
         </div>
 
         <div className="space-y-1">
           {slots.map((reg, index) => {
             if (!reg) {
-              return <div key={`empty-${index}`} className="text-slate-800 text-lg">-</div>;
+              return (
+                <div key={`empty-${index}`} className="text-slate-800 text-lg">
+                  -
+                </div>
+              );
             }
 
-			// Formatage du nom 
+            // Formatage du nom
             const nameStr = `${reg.user.firstName} ${reg.user.lastName.charAt(0)}`;
             const isMe = reg.user.id === currentUserId;
-            
-			// Calcul tiers temps
-            const hasSpecificStart = reg.startTime && reg.startTime !== exam.startTime;
+
+            // Calcul tiers temps
+            const hasSpecificStart =
+              reg.startTime && reg.startTime !== exam.startTime;
             const hasSpecificEnd = reg.endTime && reg.endTime !== exam.endTime;
             const isTiersTemps = hasSpecificStart || hasSpecificEnd;
 
             const actualStartTime = reg.startTime || exam.startTime;
             const actualEndTime = reg.endTime || exam.endTime;
 
-            const specificTimeStr = isTiersTemps 
-              ? ` (${formatTime(actualStartTime)} - ${formatTime(actualEndTime)})` 
-              : '';
-			
-			// Mise en couleur
+            const specificTimeStr = isTiersTemps
+              ? ` (${formatTime(actualStartTime)} - ${formatTime(actualEndTime)})`
+              : "";
+
+            // Mise en couleur
             let textColor = "text-slate-800";
             if (isMe) textColor = "text-blue-600 font-medium";
             else if (isTiersTemps) textColor = "text-orange-500";
 
             return (
-              <div key={reg.id} className="flex justify-between items-center text-lg">
+              <div
+                key={reg.id}
+                className="flex justify-between items-center text-lg"
+              >
                 <div className={`${textColor}`}>
-                  - {nameStr}{specificTimeStr}
+                  - {nameStr}
+                  {specificTimeStr}
                 </div>
                 <div className="font-medium text-slate-700 text-right min-w-[3rem]">
-                  {reg.room ? reg.room.name : '-'}
+                  {reg.room ? reg.room.name : "-"}
                 </div>
               </div>
             );
@@ -145,14 +160,16 @@ export const ExamCard = ({ exam, currentUserId, onRegisterClick }: ExamCardProps
       {/* FOOTER */}
       <div className="mt-4 flex-none">
         <hr className="border-slate-300 border-t-2 mb-4" />
-        <Button 
-          className={`w-full h-12 text-base font-bold rounded-lg ${btnColor}`} 
+        <Button
+          className={`w-full h-12 text-base font-bold rounded-lg ${btnColor}`}
           disabled={btnDisabled}
-          onClick={() => !btnDisabled && onRegisterClick && onRegisterClick(exam.id)}
+          onClick={() =>
+            !btnDisabled && onRegisterClick && onRegisterClick(exam.id)
+          }
         >
           {btnText}
         </Button>
       </div>
     </div>
-  )
+  );
 };

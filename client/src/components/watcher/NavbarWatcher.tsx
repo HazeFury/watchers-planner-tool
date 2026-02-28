@@ -1,6 +1,6 @@
-import { Link } from "react-router-dom"
-import { Menu, ShieldCheck, LayoutDashboard, LogOut } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { Link } from "react-router-dom";
+import { Menu, ShieldCheck, LayoutDashboard, LogOut } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   Sheet,
   SheetContent,
@@ -8,30 +8,27 @@ import {
   SheetTitle,
   SheetTrigger,
   SheetClose,
-} from "@/components/ui/sheet"
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
-import { useFetch } from '../../hooks/useFetch';
+} from "@/components/ui/sheet";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
+import { useFetch } from "../../hooks/useFetch";
 import { toast } from "sonner";
 
-
-
 export function NavbarWatcher() {
-	const { user } = useAuth();
-	const navigate = useNavigate();
-  	const { logout } = useAuth();
-  
-  const { execute: logoutApi, isLoading } = useFetch('POST', '/auth/logout');
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const { logout } = useAuth();
+
+  const { execute: logoutApi, isLoading } = useFetch("POST", "/auth/logout");
 
   const handleLogout = async () => {
     await logoutApi();
     logout();
-	toast.success("Déconnexion réussie. À bientôt !");
-    navigate('/login');
+    toast.success("Déconnexion réussie. À bientôt !");
+    navigate("/login");
   };
   return (
     <nav className="h-16 px-4 flex items-center justify-between bg-sky-100 border-b border-sky-200 shadow-sm">
-      
       <Link to="/" className="flex items-center gap-2">
         <ShieldCheck className="h-6 w-6 text-sky-700" />
         <span className="font-bold text-lg text-sky-900 tracking-tight">
@@ -41,24 +38,34 @@ export function NavbarWatcher() {
 
       <Sheet>
         <SheetTrigger asChild>
-          <Button variant="ghost" size="icon" className="text-sky-900 hover:bg-sky-200 hover:text-sky-950">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-sky-900 hover:bg-sky-200 hover:text-sky-950"
+          >
             <Menu className="h-6 w-6" />
             <span className="sr-only">Ouvrir le menu</span>
           </Button>
         </SheetTrigger>
-        
-        <SheetContent side="left" className="w-[300px] sm:w-[400px] flex flex-col bg-white">
+
+        <SheetContent
+          side="left"
+          className="w-[300px] sm:w-[400px] flex flex-col bg-white"
+        >
           <SheetHeader>
             <SheetTitle className="text-left flex items-center gap-2 border-b pb-4">
               <ShieldCheck className="h-5 w-5 text-sky-700" />
               Menu Navigation
             </SheetTitle>
           </SheetHeader>
-          
+
           <div className="flex flex-col gap-2 mt-4">
             <SheetClose asChild>
               <Link to="/">
-                <Button variant="ghost" className="w-full justify-start text-lg h-12">
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start text-lg h-12"
+                >
                   🏠 Accueil
                 </Button>
               </Link>
@@ -66,15 +73,21 @@ export function NavbarWatcher() {
 
             <SheetClose asChild>
               <Link to="/my-registrations">
-                <Button variant="ghost" className="w-full justify-start text-lg h-12">
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start text-lg h-12"
+                >
                   📅 Mes Inscriptions
                 </Button>
               </Link>
             </SheetClose>
-            
+
             <SheetClose asChild>
               <Link to="/profile">
-                <Button variant="ghost" className="w-full justify-start text-lg h-12">
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start text-lg h-12"
+                >
                   👤 Mon Profil
                 </Button>
               </Link>
@@ -82,11 +95,12 @@ export function NavbarWatcher() {
 
             <div className="h-px bg-slate-100 my-2" />
 
-            <Button 
-				onClick={handleLogout} 
-        		disabled={isLoading}
-				variant="ghost" 
-				className="w-full justify-start text-lg h-12 text-red-600 hover:text-red-700 hover:bg-red-50">
+            <Button
+              onClick={handleLogout}
+              disabled={isLoading}
+              variant="ghost"
+              className="w-full justify-start text-lg h-12 text-red-600 hover:text-red-700 hover:bg-red-50"
+            >
               <LogOut className="mr-2 h-5 w-5" />
               {isLoading ? "Déconnexion..." : "Se déconnecter"}
             </Button>
@@ -94,23 +108,24 @@ export function NavbarWatcher() {
 
           <div className="mt-auto border-t pt-4">
             <SheetClose asChild>
-				{user && user.role === "admin" && (
-				<Link to="/dashboard">
-            		<Button variant="outline" className="w-full border-slate-300 bg-slate-50 hover:bg-slate-100 text-slate-700">
-                  		<LayoutDashboard className="mr-2 h-4 w-4" />
-                  			Accès Dashboard Admin
-                	</Button>
-              </Link>
-				)}
+              {user && user.role === "admin" && (
+                <Link to="/dashboard">
+                  <Button
+                    variant="outline"
+                    className="w-full border-slate-300 bg-slate-50 hover:bg-slate-100 text-slate-700"
+                  >
+                    <LayoutDashboard className="mr-2 h-4 w-4" />
+                    Accès Dashboard Admin
+                  </Button>
+                </Link>
+              )}
             </SheetClose>
             <p className="text-xs text-center text-slate-400 mt-4">
               Version 0.1.0 - Epita Lyon
             </p>
           </div>
-
         </SheetContent>
       </Sheet>
-
     </nav>
-  )
+  );
 }
