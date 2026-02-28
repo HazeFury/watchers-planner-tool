@@ -7,7 +7,7 @@ import { JwtStrategy } from './jwt.strategy';
 
 @Module({
   imports: [
-    PrismaModule, 
+    PrismaModule,
     JwtModule.register({
       global: true,
       secret: process.env.JWT_SECRET,

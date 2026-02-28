@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, ConflictException} from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma.service';
@@ -30,19 +30,31 @@ export class UsersService {
   }
 
   // LECTURE (UN SEUL)
- async findOne(id: number) {
-  const user = await this.prisma.user.findUnique({ where: { id } });
-  if (!user) {
-    throw new NotFoundException(`Cette utilisateur n'existe pas`);
+  async findOne(id: number) {
+    const user = await this.prisma.user.findUnique({ where: { id } });
+    if (!user) {
+      throw new NotFoundException(`Cette utilisateur n'existe pas`);
+    }
+    return user;
   }
-  return user;
-}
+
+  async getProfile(userId: number) {
+    return this.prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        firstName: true,
+        lastName: true,
+        email: true,
+        contractHours: true,
+      },
+    });
+  }
 
   // MISE À JOUR
   async update(id: number, updateUserDto: UpdateUserDto) {
-  try {
+    try {
       return await this.prisma.user.update({
-		where: { id },
+        where: { id },
         data: updateUserDto,
       });
     } catch (error) {

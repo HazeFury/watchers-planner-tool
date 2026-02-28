@@ -22,6 +22,11 @@ export class ExamsController {
     return this.examsService.findAll();
   }
 
+  @Get('upcoming')
+  findAllFromToday() {
+    return this.examsService.findAllFromToday();
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.examsService.findOne(+id);

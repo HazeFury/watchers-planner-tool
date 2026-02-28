@@ -43,7 +43,9 @@ export class RoomsService {
       });
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
-        throw new ConflictException(`Le nom "${updateRoomDto.name}" est déjà utilisé par une autre salle.`);
+        throw new ConflictException(
+          `Le nom "${updateRoomDto.name}" est déjà utilisé par une autre salle.`
+        );
       }
       throw error;
     }

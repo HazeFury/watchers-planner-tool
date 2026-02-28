@@ -134,6 +134,7 @@ L'API est protégée. La plupart des routes nécessitent d'être connecté (Cook
 
 * `GET /users` : Liste tous les surveillants (Admin seulement).
 * `GET /users/:id` : Détails d'un surveillant.
+* `GET /users/me` : Détails du surveillant connectés.
 * `POST /users` : Créer un surveillant.
 * `PATCH /users/:id` : Modifier un surveillant.
 * `DELETE /users/:id` : Supprimer un surveillant.
@@ -141,6 +142,7 @@ L'API est protégée. La plupart des routes nécessitent d'être connecté (Cook
 ### 📅 Examens (Exams)
 
 * `GET /exams` : Liste des examens (Accessible à tous les connectés).
+* `GET /exams/upcoming` : Liste des examens à venir.
 * `GET /exams/:id` : Détails d'un examen.
 * `POST /exams` : Créer un examen (Admin).
 * `PATCH /exams/:id` : Modifier un examen (Admin).
@@ -154,6 +156,7 @@ L'API est protégée. La plupart des routes nécessitent d'être connecté (Cook
 * `GET /registrations` : Voir les inscriptions.
     * *Admin* : Voit tout (avec emails).
     * *User* : Voit ses inscriptions et ses collègues (emails masqués).
+* `GET /registrations/mine` : Voir les inscriptions de l'utilisateur connecté.
 * `PATCH /registrations/:id` : Modifier une inscription (Salle, horaires aménagés) (Admin).
 * `DELETE /registrations/:id` : Désinscrire quelqu'un (Admin).
 
