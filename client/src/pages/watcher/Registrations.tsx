@@ -2,8 +2,13 @@ import { useEffect } from 'react';
 import { useFetch } from '@/hooks/useFetch';
 import { LoadingOverlay } from '@/components/ui/LoadingOverlay';
 import { CalendarDays, Clock, MapPin, GraduationCap } from 'lucide-react';
+import { 
+  formatTimeStartEnd, 
+  formatCalendarDay, 
+  formatCalendarDate, 
+  formatCalendarMonth 
+} from '@/utils/date';
 
-// Interfaces pour typer notre retour d'API
 interface Room {
   id: number;
   name: string;
@@ -31,23 +36,6 @@ export default function Registrations() {
   useEffect(() => {
     execute();
   }, [execute]);
-
-  // --- Fonctions utilitaires de formatage ---
-  const formatTime = (dateStr: string) => {
-    return new Date(dateStr).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }).replace(':', 'h');
-  };
-
-  const formatDay = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString('fr-FR', { weekday: 'short' }).replace('.', '').toUpperCase();
-  };
-
-  const formatNumber = (dateStr: string) => {
-    return new Date(dateStr).getDate();
-  };
-
-  const formatMonth = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString('fr-FR', { month: 'short' }).replace('.', '').toUpperCase();
-  };
 
   return (
     <div className="p-4 md:p-8 max-w-4xl mx-auto">
@@ -93,13 +81,13 @@ export default function Registrations() {
                 {/* BLOC GAUCHE : La Date (style calendrier iOS) */}
                 <div className="bg-slate-50 border-r border-slate-200 p-4 flex flex-col items-center justify-center min-w-[90px] md:min-w-[110px]">
                   <span className="text-xs font-bold text-red-500 uppercase tracking-wider">
-                    {formatDay(reg.exam.startTime)}
+                    {formatCalendarDay(reg.exam.startTime)}
                   </span>
                   <span className="text-3xl md:text-4xl font-black text-slate-800 my-1">
-                    {formatNumber(reg.exam.startTime)}
+                    {formatCalendarDate(reg.exam.startTime)}
                   </span>
                   <span className="text-xs font-bold text-slate-500 uppercase">
-                    {formatMonth(reg.exam.startTime)}
+                    {formatCalendarMonth(reg.exam.startTime)}
                   </span>
                 </div>
 
@@ -112,7 +100,7 @@ export default function Registrations() {
                     {/* L'heure */}
                     <div className={`flex items-center gap-2 ${isTiersTemps ? 'text-orange-600 font-bold' : 'text-slate-600'}`}>
                       <Clock className="h-4 w-4" />
-                      <span>{formatTime(actualStart)} - {formatTime(actualEnd)}</span>
+                      <span>{formatTimeStartEnd(actualStart, actualEnd)}</span>
                     </div>
                     
                     {/* La Salle */}
