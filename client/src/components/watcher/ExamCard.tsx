@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { formatTime } from "@/utils/formatTime";
+import { formatTime, formatTimeStartEnd, formatDateLetter } from "@/utils/date";
 
 interface User {
   id: number;
@@ -42,11 +42,8 @@ export const ExamCard = ({ exam, currentUserId, onRegisterClick }: ExamCardProps
   const isFull = exam.registrations.length >= exam.maxWatchers;
 
   // --- 2. FORMATAGE DES DATES ---
-  const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
-  const examDate = new Date(exam.startTime);
-  const dateFormatted = capitalize(examDate.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }));
-
-  const globalTimeStr = `${formatTime(exam.startTime)} - ${formatTime(exam.endTime)}`;
+  const dateFormatted = formatDateLetter(exam.startTime);
+  const globalTimeStr = formatTimeStartEnd(exam.startTime, exam.endTime);
 
   // --- 3. PRÉPARATION DE LA LISTE DES PLACES ---
   // On crée un tableau de la taille exacte de maxWatchers
@@ -73,7 +70,7 @@ export const ExamCard = ({ exam, currentUserId, onRegisterClick }: ExamCardProps
   }
 
   return (
-    <div className={`bg-white rounded-xl border-2 p-5 flex flex-col h-full ${cardBorder}`}>
+    <div className={`bg-slate-50 rounded-xl border-2 p-5 flex flex-col h-full ${cardBorder}`}>
       {/* HEADER & SUB-HEADER */}
       <div>
         <div className="flex justify-between items-start mb-2">

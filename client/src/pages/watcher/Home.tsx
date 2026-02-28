@@ -5,7 +5,7 @@ import { ExamCard, type Exam } from '../../components/watcher/ExamCard';
 import { LoadingOverlay } from '../../components/ui/LoadingOverlay';
 import { useConfirm } from '@/hooks/useConfirm';
 import { RefreshCw } from 'lucide-react';
-import { formatTime } from "@/utils/formatTime";
+import { formatTimeStartEnd, formatDateLetter } from "@/utils/date";
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
@@ -26,15 +26,8 @@ export default function Home() {
     
     if (!selectedExam) return;
 
-    // 2. Formatage de la date 
-    const dateObj = new Date(selectedExam.startTime);
-    const dateStr = dateObj.toLocaleDateString('fr-FR', { 
-      weekday: 'long', 
-      day: 'numeric', 
-      month: 'long' 
-    });
-
-    const globalTimeStr = `${formatTime(selectedExam.startTime)} - ${formatTime(selectedExam.endTime)}`;
+    const dateStr = formatDateLetter(selectedExam.startTime)
+    const globalTimeStr = formatTimeStartEnd(selectedExam.startTime, selectedExam.endTime)
 
     const message = (
       <span>
@@ -46,7 +39,7 @@ export default function Home() {
 
 	// On appelle confirm() avec notre texte, et on lui donne une fonction "callback"
     confirm(
-	  message,
+	  message, // Texte de la modal
       async () => {
         // Ce bloc de code ne s'exécutera QUE si l'utilisateur clique sur "Confirmer"
         const res = await registerToExam({ body: { examId } });
