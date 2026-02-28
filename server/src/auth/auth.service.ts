@@ -9,7 +9,7 @@ import { LoginUserDto } from './dto/login-user.dto';
 export class AuthService {
   constructor(
     private prisma: PrismaService,
-    private jwtService: JwtService,
+    private jwtService: JwtService
   ) {}
 
   async signIn(loginDto: LoginDto) {
@@ -31,7 +31,7 @@ export class AuthService {
 
     return {
       access_token: await this.jwtService.signAsync(payload),
-	  admin: admin,
+      admin: admin,
     };
   }
 

@@ -23,7 +23,7 @@ export class ExamsService {
 
   async findAllFromToday() {
     const today = new Date();
-    
+
     return this.prisma.exam.findMany({
       where: {
         startTime: { gte: today },
@@ -40,12 +40,12 @@ export class ExamsService {
                 id: true,
                 firstName: true,
                 lastName: true,
-              }
+              },
             },
-			room: true,
-          }
-        }
-      }
+            room: true,
+          },
+        },
+      },
     });
   }
 
@@ -60,7 +60,7 @@ export class ExamsService {
   }
 
   async update(id: number, updateExamDto: UpdateExamDto) {
-    await this.findOne(id); 
+    await this.findOne(id);
 
     return this.prisma.exam.update({
       where: { id },

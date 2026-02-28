@@ -1,4 +1,9 @@
-import { ConflictException, Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { CreateRegistrationDto } from './dto/create-registration.dto';
 import { UpdateRegistrationDto } from './dto/update-registration.dto';
 import { PrismaService } from 'src/prisma.service';
@@ -29,10 +34,10 @@ export class RegistrationsService {
     }
 
     if (exam.isClosed || exam.isArchived) {
-       throw new BadRequestException("Les inscriptions pour cet examen sont closes.");
+      throw new BadRequestException('Les inscriptions pour cet examen sont closes.');
     }
 
-	const userExists = await this.prisma.user.findUnique({ where: { id: userId } });
+    const userExists = await this.prisma.user.findUnique({ where: { id: userId } });
     if (!userExists) {
       throw new NotFoundException(`Cet utilisateur n'existe pas.`);
     }
@@ -63,24 +68,24 @@ export class RegistrationsService {
 
   async findUpcomingForUser(userId: number) {
     const today = new Date();
-    
+
     return this.prisma.registration.findMany({
       where: {
         userId: userId,
         exam: {
           startTime: { gte: today },
           isArchived: false,
-        }
+        },
       },
       include: {
         exam: true,
-		room: true,
+        room: true,
       },
       orderBy: {
         exam: {
           startTime: 'asc',
-        }
-      }
+        },
+      },
     });
   }
 
