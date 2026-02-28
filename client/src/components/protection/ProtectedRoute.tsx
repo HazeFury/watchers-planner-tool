@@ -1,11 +1,11 @@
-import { Navigate, Outlet } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
-import { useEffect } from 'react';
-import { LoadingOverlay } from '../ui/LoadingOverlay';
-import { toast } from 'sonner';
+import { Navigate, Outlet } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
+import { useEffect } from "react";
+import { LoadingOverlay } from "../ui/LoadingOverlay";
+import { toast } from "sonner";
 
 interface ProtectedRouteProps {
-  allowedRole?: 'admin' | 'user';
+  allowedRole?: "admin" | "user";
 }
 
 export const ProtectedRoute = ({ allowedRole }: ProtectedRouteProps) => {
@@ -26,7 +26,7 @@ export const ProtectedRoute = ({ allowedRole }: ProtectedRouteProps) => {
   }
 
   if (allowedRole && user.role !== allowedRole) {
-    return <Navigate to="/" replace />; 
+    return <Navigate to="/" replace />;
   }
 
   return <Outlet />;

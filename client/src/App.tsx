@@ -1,14 +1,14 @@
-import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom';
-import Home from './pages/watcher/Home';
-import Dashboard from './pages/admin/Dashboard';
-import Login from './pages/login/Login';
-import { NavbarWatcher } from './components/watcher/NavbarWatcher';
-import { NavbarAdmin } from './components/admin/NavbarAdmin';
-import { AuthProvider } from './context/AuthContext';
-import { ProtectedRoute } from './components/protection/ProtectedRoute';
+import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
+import Home from "./pages/watcher/Home";
+import Dashboard from "./pages/admin/Dashboard";
+import Login from "./pages/login/Login";
+import { NavbarWatcher } from "./components/watcher/NavbarWatcher";
+import { NavbarAdmin } from "./components/admin/NavbarAdmin";
+import { AuthProvider } from "./context/AuthContext";
+import { ProtectedRoute } from "./components/protection/ProtectedRoute";
 import { Toaster } from "@/components/ui/sonner";
-import Registrations from './pages/watcher/Registrations';
-import Profile from './pages/watcher/Profile';
+import Registrations from "./pages/watcher/Registrations";
+import Profile from "./pages/watcher/Profile";
 
 const PublicLayout = () => (
   <div className="min-h-screen bg-white">
@@ -36,8 +36,8 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route element={<PublicLayout />}>
               <Route path="/" element={<Home />} />
-			  <Route path="/my-registrations" element={<Registrations />} />
-			  <Route path="/profile" element={<Profile />} />
+              <Route path="/my-registrations" element={<Registrations />} />
+              <Route path="/profile" element={<Profile />} />
             </Route>
           </Route>
 
@@ -48,7 +48,7 @@ function App() {
           </Route>
         </Routes>
       </BrowserRouter>
-	  <Toaster position="bottom-right" richColors />
+      <Toaster position="bottom-right" richColors />
     </AuthProvider>
   );
 }
