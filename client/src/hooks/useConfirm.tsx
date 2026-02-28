@@ -1,5 +1,5 @@
-import { useState, useCallback, type ReactNode } from 'react';
-import { Button } from '@/components/ui/button';
+import { useState, useCallback, type ReactNode } from "react";
+import { Button } from "@/components/ui/button";
 
 interface ConfirmConfig {
   isOpen: boolean;
@@ -37,24 +37,27 @@ export const useConfirm = () => {
       <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4">
         {/* La boite blanche */}
         <div className="bg-white rounded-xl shadow-lg w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-          
           <div className="p-6">
-            <h3 className="text-xl font-bold text-slate-800 mb-2">Confirmation</h3>
-            <p className="text-slate-600 font-medium whitespace-pre-line leading-relaxed">{config.message}</p>
+            <h3 className="text-xl font-bold text-slate-800 mb-2">
+              Confirmation
+            </h3>
+            <p className="text-slate-600 font-medium whitespace-pre-line leading-relaxed">
+              {config.message}
+            </p>
           </div>
-          
+
           <div className="bg-slate-50 p-4 flex flex-col-reverse sm:flex-row justify-end gap-3 border-t border-slate-100">
             {/* Bouton Annuler */}
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               onClick={close}
               className="w-full sm:w-auto text-slate-600 border-slate-300"
             >
               Annuler
             </Button>
-            
+
             {/* Bouton Confirmer */}
-            <Button 
+            <Button
               onClick={() => {
                 config.onValidate();
                 close();
@@ -64,7 +67,6 @@ export const useConfirm = () => {
               Confirmer
             </Button>
           </div>
-
         </div>
       </div>
     );

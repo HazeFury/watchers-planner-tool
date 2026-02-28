@@ -1,11 +1,11 @@
-import { createContext, useContext, useEffect, useState } from 'react';
-import { useFetch } from '../hooks/useFetch';
-import { toast } from 'sonner';
+import { createContext, useContext, useEffect, useState } from "react";
+import { useFetch } from "../hooks/useFetch";
+import { toast } from "sonner";
 
 interface User {
   userId: number;
   email: string;
-  role: 'admin' | 'user';
+  role: "admin" | "user";
 }
 
 interface AuthContextType {
@@ -20,7 +20,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoadingAuth, setIsLoadingAuth] = useState(true);
-  const { execute } = useFetch('GET', '/auth/check');
+  const { execute } = useFetch("GET", "/auth/check");
 
   useEffect(() => {
     const verifySession = async () => {
@@ -42,9 +42,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       toast.error("Votre session a expiré, veuillez vous reconnecter.");
     };
 
-    window.addEventListener('auth:unauthorized', handleUnauthorized);
+    window.addEventListener("auth:unauthorized", handleUnauthorized);
 
-    return () => window.removeEventListener('auth:unauthorized', handleUnauthorized);
+    return () =>
+      window.removeEventListener("auth:unauthorized", handleUnauthorized);
   }, []);
 
   const login = (userData: User) => setUser(userData);
@@ -59,6 +60,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (!context) throw new Error("useAuth doit être utilisé dans un AuthProvider");
+  if (!context)
+    throw new Error("useAuth doit être utilisé dans un AuthProvider");
   return context;
 };
