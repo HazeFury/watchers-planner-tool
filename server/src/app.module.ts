@@ -10,7 +10,7 @@ import { RoomsModule } from './rooms/rooms.module';
 
 @Global()
 @Module({
-  imports: [ UsersModule, AuthModule, ExamsModule, RegistrationsModule, RoomsModule],
+  imports: [UsersModule, AuthModule, ExamsModule, RegistrationsModule, RoomsModule],
   controllers: [AppController],
   providers: [AppService, PrismaService],
   exports: [PrismaService],

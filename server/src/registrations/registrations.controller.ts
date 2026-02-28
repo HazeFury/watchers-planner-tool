@@ -1,4 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, BadRequestException } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Request,
+  BadRequestException,
+} from '@nestjs/common';
 import { RegistrationsService } from './registrations.service';
 import { CreateRegistrationDto } from './dto/create-registration.dto';
 import { UpdateRegistrationDto } from './dto/update-registration.dto';
@@ -26,18 +37,18 @@ export class RegistrationsController {
 
     if (req.user.role === 'admin') {
       if (!createRegistrationDto.userId) {
-        throw new BadRequestException("Tu dois choisir un(e) surveillant(e) à inscrire.");
+        throw new BadRequestException('Tu dois choisir un(e) surveillant(e) à inscrire.');
       }
       targetUserId = createRegistrationDto.userId;
     } else {
       targetUserId = req.user.userId;
     }
-	
+
     return this.registrationsService.create(targetUserId, createRegistrationDto);
   }
   @Get()
   findAll() {
-      return this.registrationsService.findAll();
+    return this.registrationsService.findAll();
   }
 
   @Get('mine')
@@ -59,7 +70,7 @@ export class RegistrationsController {
   }
 
   @Delete(':id')
-  @Roles('admin') 
+  @Roles('admin')
   remove(@Param('id') id: string) {
     return this.registrationsService.remove(+id);
   }
