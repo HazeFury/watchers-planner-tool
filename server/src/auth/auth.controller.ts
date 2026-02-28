@@ -1,4 +1,12 @@
-import { Controller, Post, Body, Get, Res, UseGuards, Request } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  Res,
+  UseGuards,
+  Request,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { LoginUserDto } from './dto/login-user.dto';
@@ -19,7 +27,10 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('login')
-  async login(@Body() loginDto: LoginDto, @Res({ passthrough: true }) response: express.Response) {
+  async login(
+    @Body() loginDto: LoginDto,
+    @Res({ passthrough: true }) response: express.Response,
+  ) {
     const result = await this.authService.signIn(loginDto);
 
     response.cookie('jwt', result.access_token, {
@@ -29,14 +40,17 @@ export class AuthController {
       maxAge: 4 * 60 * 60 * 1000, // (4h)
     });
 
-   	return { 
-      message: 'Connexion réussie', 
-      admin: result.admin
+    return {
+      message: 'Connexion réussie',
+      admin: result.admin,
     };
   }
 
   @Post('login-user')
-  async loginUser(@Body() loginUserDto: LoginUserDto, @Res({ passthrough: true }) response: express.Response) {
+  async loginUser(
+    @Body() loginUserDto: LoginUserDto,
+    @Res({ passthrough: true }) response: express.Response,
+  ) {
     const result = await this.authService.signInUser(loginUserDto);
 
     response.cookie('jwt', result.access_token, {
@@ -46,22 +60,22 @@ export class AuthController {
       maxAge: 1 * 60 * 60 * 1000, // (1h)
     });
 
-    return { 
-      message: 'Authentification réussie', 
-      user: result.user 
+    return {
+      message: 'Authentification réussie',
+      user: result.user,
     };
   }
 
   @Get('check')
   @UseGuards(JwtAuthGuard)
   checkAuth(@Request() req: RequestWithUser) {
-    return req.user; 
+    return req.user;
   }
 
   @Post('logout')
   logout(@Res({ passthrough: true }) response: express.Response) {
     response.clearCookie('jwt');
-    
+
     return { message: 'Déconnexion réussie' };
   }
 }

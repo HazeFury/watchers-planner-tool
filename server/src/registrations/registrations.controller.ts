@@ -36,7 +36,6 @@ export class RegistrationsController {
     return this.registrationsService.create(targetUserId, createRegistrationDto);
   }
   @Get()
-  @Roles('admin')
   findAll() {
       return this.registrationsService.findAll();
   }
