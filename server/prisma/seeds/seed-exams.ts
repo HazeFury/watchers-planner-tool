@@ -11,7 +11,7 @@ async function main() {
     // Dates aléatoires entre J+0 et J+35
     const daysToAdd = Math.floor(Math.random() * 35);
     // Heure de début aléatoire entre 8h et 15h
-    const startHour = 8 + Math.floor(Math.random() * 8); 
+    const startHour = 8 + Math.floor(Math.random() * 8);
     // Durée de l'examen (entre 2 et 4 heures)
     const durationHours = 2 + Math.floor(Math.random() * 3);
 

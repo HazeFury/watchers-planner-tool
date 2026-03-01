@@ -17,7 +17,7 @@ async function main() {
   const admin = await prisma.admin.upsert({
     where: { email: email },
     update: {
-        password: hashedPassword, // On met à jour le mdp au cas où on le change dans le .env
+      password: hashedPassword, // On met à jour le mdp au cas où on le change dans le .env
     },
     create: {
       email: email,
