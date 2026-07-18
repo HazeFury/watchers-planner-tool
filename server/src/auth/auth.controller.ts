@@ -2,7 +2,7 @@ import { Controller, Post, Body, Get, Res, UseGuards, Request } from '@nestjs/co
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { LoginUserDto } from './dto/login-user.dto';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { JwtAuthGuard } from './jwt-auth.guard';
 import express from 'express';
 import { Request as ExpressRequest } from 'express';
 
